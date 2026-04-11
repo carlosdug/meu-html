@@ -21,8 +21,11 @@ jobs:
     - name: Install dependencies
       run: npm install
 
+    - name: Run tests
+      run: npm test
+
     - name: Lint JavaScript
-      run: npx eslint script.js || true  # Ignore errors for now
+      run: npx eslint script.js
 
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main'
