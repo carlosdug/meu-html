@@ -9,14 +9,6 @@ const path = require('path');
 const scriptPath = path.join(__dirname, 'script.js');
 const scriptContent = fs.readFileSync(scriptPath, 'utf8');
 
-// Mock localStorage
-global.localStorage = {
-  getItem: jest.fn(() => '[]'),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-  clear: jest.fn()
-};
-
 // Set up DOM
 document.body.innerHTML = `
   <form id="entryForm">
@@ -32,6 +24,12 @@ document.body.innerHTML = `
   <h2>Saldo Total: R$ <span id="balance">0.00</span></h2>
 `;
 
+// Mock localStorage
+jest.spyOn(window.localStorage.__proto__, 'getItem').mockReturnValue('[]');
+jest.spyOn(window.localStorage.__proto__, 'setItem');
+jest.spyOn(window.localStorage.__proto__, 'removeItem');
+jest.spyOn(window.localStorage.__proto__, 'clear');
+
 // Execute the script in the test environment
 eval(scriptContent);
 
@@ -39,9 +37,10 @@ describe('Income and Expense Tracker', () => {
   beforeEach(() => {
     // Reset mocks
     jest.clearAllMocks();
+    // Reset localStorage mock
+    window.localStorage.__proto__.getItem.mockReturnValue('[]');
     // Reset entries
     entries = [];
-    localStorage.getItem.mockReturnValue('[]');
     // Reset DOM
     document.getElementById('entries').innerHTML = '';
     document.getElementById('balance').textContent = '0.00';
@@ -66,14 +65,12 @@ describe('Income and Expense Tracker', () => {
     document.getElementById('amount').value = '100';
     document.getElementById('type').value = 'receita';
     
-    const event = { preventDefault: jest.fn() };
-    
     // Trigger form submit
     document.getElementById('entryForm').dispatchEvent(new Event('submit'));
     
     expect(entries).toHaveLength(1);
     expect(entries[0]).toEqual({ description: 'Test Entry', amount: 100, type: 'receita' });
-    expect(localStorage.setItem).toHaveBeenCalledWith('entries', JSON.stringify(entries));
+    expect(window.localStorage.__proto__.setItem).toHaveBeenCalledWith('entries', JSON.stringify(entries));
   });
 
   test('should remove entry correctly', () => {
@@ -84,6 +81,6 @@ describe('Income and Expense Tracker', () => {
     removeEntry(0);
     
     expect(entries).toHaveLength(0);
-    expect(localStorage.setItem).toHaveBeenCalledWith('entries', '[]');
+    expect(window.localStorage.__proto__.setItem).toHaveBeenCalledWith('entries', '[]');
   });
 });
