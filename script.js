@@ -1,4 +1,4 @@
-let entries = JSON.parse(localStorage.getItem('entries')) || [];
+var entries = JSON.parse(localStorage.getItem('entries')) || [];
 
 function displayEntries() {
     const entriesDiv = document.getElementById('entries');
