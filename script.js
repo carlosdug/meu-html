@@ -17,6 +17,7 @@ function displayEntries() {
     document.getElementById('balance').textContent = balance.toFixed(2);
 }
 
+// eslint-disable-next-line no-unused-vars
 function removeEntry(index) {
     entries.splice(index, 1);
     localStorage.setItem('entries', JSON.stringify(entries));
