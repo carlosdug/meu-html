@@ -3,39 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lançamentos de Receitas e Despesas</title>
+    <title>Gerenciador de Finanças</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        form { margin-bottom: 20px; }
-        label { display: block; margin-top: 10px; }
-        input, select { width: 100%; padding: 8px; margin-top: 5px; }
-        button { padding: 10px; margin-top: 10px; background: #4CAF50; color: white; border: none; cursor: pointer; }
+        body { font-family: Arial, sans-serif; margin: 20px; max-width: 1200px; }
+        .container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .section { border: 1px solid #ddd; padding: 15px; border-radius: 5px; }
+        h1 { grid-column: 1 / -1; }
+        .dashboard { grid-column: 1 / -1; background: #f0f0f0; padding: 20px; border-radius: 5px; }
+        .dashboard-item { display: inline-block; margin-right: 30px; }
+        .dashboard-value { font-size: 24px; font-weight: bold; color: #4CAF50; }
+        form { margin-bottom: 15px; }
+        label { display: block; margin-top: 10px; font-weight: bold; }
+        input, select, textarea { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; }
+        button { padding: 10px 15px; margin: 5px 5px 5px 0; background: #4CAF50; color: white; border: none; cursor: pointer; border-radius: 3px; }
         button:hover { background: #45a049; }
+        button.danger { background: #f44336; }
+        button.danger:hover { background: #da190b; }
         ul { list-style: none; padding: 0; }
-        li { padding: 5px; border-bottom: 1px solid #ddd; }
+        li { padding: 8px; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; }
+        .controls { grid-column: 1 / -1; }
     </style>
 </head>
 <body>
-    <h1>Lançamentos de Receitas e Despesas</h1>
-    <form id="entryForm">
-        <label for="description">Descrição:</label>
-        <input type="text" id="description" required>
-        
-        <label for="amount">Valor (R$):</label>
-        <input type="number" id="amount" step="0.01" required>
-        
-        <label for="type">Tipo:</label>
-        <select id="type">
-            <option value="receita">Receita</option>
-            <option value="despesa">Despesa</option>
-        </select>
-        
-        <button type="submit">Adicionar Lançamento</button>
-    </form>
+    <h1>💰 Gerenciador de Finanças</h1>
     
-    <div id="entries"></div>
+    <div class="dashboard">
+        <div class="dashboard-item">Saldo Receitas: <div class="dashboard-value">R$ <span id="totalReceita">0.00</span></div></div>
+        <div class="dashboard-item">Total Despesas: <div class="dashboard-value">-R$ <span id="totalDespesa">0.00</span></div></div>
+        <div class="dashboard-item">Investimentos: <div class="dashboard-value">R$ <span id="totalInvest">0.00</span></div></div>
+        <div class="dashboard-item">Saldo Líquido: <div class="dashboard-value">R$ <span id="balance">0.00</span></div></div>
+    </div>
     
-    <h2>Saldo Total: R$ <span id="balance">0.00</span></h2>
+    <div class="container">
+        <div class="section">
+            <h2>Receitas e Despesas</h2>
+            <form id="entryForm">
+                <label for="description">Descrição:</label>
+                <input type="text" id="description" required>
+                
+                <label for="amount">Valor (R$):</label>
+                <input type="number" id="amount" step="0.01" required>
+                
+                <label for="type">Tipo:</label>
+                <select id="type">
+                    <option value="receita">Receita</option>
+                    <option value="despesa">Despesa</option>
+                </select>
+                
+                <button type="submit">Adicionar</button>
+            </form>
+            <div id="entries"></div>
+        </div>
+        
+        <div class="section">
+            <h2>Investimentos</h2>
+            <form id="investForm">
+                <label for="investName">Nome:</label>
+                <input type="text" id="investName" required>
+                
+                <label for="investAmount">Valor Investido (R$):</label>
+                <input type="number" id="investAmount" step="0.01" required>
+                
+                <label for="investCurrent">Valor Atual (R$):</label>
+                <input type="number" id="investCurrent" step="0.01" required>
+                
+                <label for="investType">Tipo:</label>
+                <select id="investType">
+                    <option value="acao">Ação</option>
+                    <option value="fundo">Fundo</option>
+                    <option value="cripto">Cripto</option>
+                    <option value="outro">Outro</option>
+                </select>
+                
+                <button type="submit">Adicionar Investimento</button>
+            </form>
+            <div id="investments"></div>
+        </div>
+    </div>
+    
+    <div class="controls section">
+        <h2>Backup e Restauração</h2>
+        <button onclick="exportCSV()">📥 Exportar para CSV</button>
+        <label for="importFile" style="display: inline-block; margin-top: 0;">
+            <input type="file" id="importFile" accept=".csv" style="display: none;">
+            <button type="button" onclick="document.getElementById('importFile').click()">📤 Importar CSV</button>
+        </label>
+    </div>
     
     <script src="script.js"></script>
 </body>
